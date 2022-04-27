@@ -34,6 +34,9 @@ public class ClickRaceServicesStub implements ClickRaceServices {
             if (racesData.get(racenum).contains(rp)){
                 throw new ServicesException("Racer "+rp.getNumber()+" already registered in race "+racenum);
             }
+            else if(racesData.get(racenum).size() >= 5){
+                throw new ServicesException("ERROR!\nThere are already 5 players in the race "+racenum);
+            }
             else{
                 racesData.get(racenum).add(rp);
             }

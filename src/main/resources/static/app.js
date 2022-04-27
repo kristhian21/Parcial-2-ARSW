@@ -13,7 +13,7 @@ var carsCurrentYPositions=[];
 
 
 var stompClient = null;
-var stop = true;
+var playing = false;
 
 movex = function(){    
     mycarxpos+=10;
@@ -31,34 +31,34 @@ initAndRegisterInServer = function(){
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function (frame) {
         console.log('Connected: ' + frame);
-    
+
     $.ajax({
         url: "races/25/participants",
         type: 'PUT',
         data: JSON.stringify(mycar),
         contentType: "application/json"
     }).then(
-            function(){                
+            function(){
                 alert("Competitor registered successfully!");
                 stompClient.subscribe('/topic/clickRace25',function (eventbody) {
-                    if(stop){
+                    if(!playing){
                         loadCompetitorsFromServer();
                         addPlayButton();
                         paintCars();
-                        stop = false;
+                        playing = true;
+                        max_players = true;
                     }
                 });
                 stompClient.subscribe('/topic/winner25',function (eventbody) {
                     console.log("Ganador!");
                     getWinner();
-                    stop = true;
                 });
                 stompClient.send('/app/clickRace25',{}, JSON.stringify("Car #" + mycar.number + " registered"));
                 removeRegister();
             },
             function(err){
                 alert("err:"+err.responseText);
-            }        
+            }
         );
 });
 
